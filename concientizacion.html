@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Miauguau — Rescatamos, cuidamos y encontramos hogares amorosos para animales perdidos o abandonados. Adoptá, ayudá, sumate." />
+  <title>Miauguau — Concientización</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='estilos/estilo.css') }}?v=2">
+  <link rel="stylesheet" href="{{ url_for('static', filename='estilos/estilo_chatbot.css') }}?v=2">
+  <link rel="stylesheet" href="{{ url_for('static', filename='estilos/estilo_cultui.css') }}?v=2">
+
+  <!-- El contenido de esta pagina siempre es visible, independiente del JS -->
+  <style>[data-page-view] { display: block !important; }</style>
+</head>
+<body>
+
+  
+  <header class="top-navbar">
+    <div class="navbar-inner">
+      <a class="logo" href="{{ url_for('inicio') }}" data-nav="home" aria-label="Miauguau inicio">
+        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">pets</span>
+        Miauguau
+      </a>
+
+      <nav class="desktop-nav" aria-label="Navegación principal">
+        <a class="nav-link" href="{{ url_for('inicio') }}" data-nav="home">Inicio</a>
+        <a class="nav-link nav-link--active" href="{{ url_for('concientizacion') }}" data-nav="concientizar">Concientización</a>
+        <a class="nav-link" href="{{ url_for('adopciones') }}" data-nav="adoptar">Adopciones</a>
+        <a class="nav-link" href="{{ url_for('contacto') }}" data-nav="contacto">Contacto</a>
+      </nav>
+
+      <div class="search-bar" role="search">
+        <span class="material-symbols-outlined search-icon">search</span>
+        <input type="text" placeholder="Buscar mascota..." class="search-input" aria-label="Buscar mascota">
+      </div>
+
+      <button class="btn-adopt-nav" data-nav="adoptar" type="button">Adoptar Ahora</button>
+
+      <button class="dark-mode-toggle" type="button" aria-label="Cambiar modo oscuro">
+        <span class="material-symbols-outlined">dark_mode</span>
+      </button>
+
+      <button class="mobile-menu-btn" type="button" aria-label="Abrir menú">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+    </div>
+  </header>
+
+
+  <main class="main-content">
+
+<div data-page-view="concientizar" class="is-active">
+
+      <section class="conciencia-hero">
+        <div class="conciencia-hero__decor" aria-hidden="true">
+          <div class="decor-circle decor-circle--primary"></div>
+          <div class="decor-circle decor-circle--tertiary"></div>
+        </div>
+        <div class="page-container">
+          <div class="section-header section-header--center reveal">
+            <span class="badge">Concientización</span>
+            <h1 class="section-title" style="font-size: clamp(2.4rem, 5.5vw, 4.2rem);">Cada mascota merece una <em>segunda oportunidad</em></h1>
+            <p class="section-description">La concientización es el primer paso para generar un cambio real. Informar sobre el abandono, el maltrato y la importancia de la adopción responsable salva vidas y transforma comunidades.</p>
+          </div>
+        </div>
+      </section>
+
+      {# ===================== ESTADÍSTICAS DESDE LA DB ===================== #}
+      <section class="stats-section reveal">
+        <div class="stats-grid">
+          {% for stat in estadisticas %}
+          <div class="stat-card">
+            <p class="stat-number" data-count="{{ stat.numero }}" data-suffix="{{ stat.sufijo }}">{{ stat.numero }}{{ stat.sufijo }}</p>
+            <p class="stat-label">{{ stat.etiqueta }}</p>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      {# ===================== TEMAS DE CONCIENTIZACIÓN DESDE LA DB ===================== #}
+      <section class="section">
+        <div class="page-container">
+          <div class="section-header reveal">
+            <span class="eyebrow">Temas clave</span>
+            <h2 class="section-title">Temas de <em>concientización</em></h2>
+            <p class="section-description">Conocer es el primer paso para actuar. Informate sobre los temas más urgentes que enfrentan las mascotas en nuestro país.</p>
+          </div>
+        </div>
+        <div class="info-grid reveal">
+          {% for tema in temas %}
+          <div class="card">
+            <div class="card-icon card-icon--{{ tema.color_icono }}">
+              <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">{{ tema.icono }}</span>
+            </div>
+            <h3 class="card-title">{{ tema.titulo }}</h3>
+            <p class="card-text">{{ tema.texto }}</p>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      {# ===================== TIMELINE DESDE LA DB ===================== #}
+      <section class="section" style="background: var(--surface-sunken);">
+        <div class="page-container">
+          <div class="section-header reveal">
+            <span class="eyebrow">Nuestro proceso</span>
+            <h2 class="section-title">Del rescate al <em>hogar</em></h2>
+            <p class="section-description">Cada paso está diseñado para garantizar el bienestar de cada mascota.</p>
+          </div>
+        </div>
+        <div class="timeline reveal">
+          {% for paso in timeline %}
+          <div class="timeline-item">
+            <h3 class="timeline-item__title">{{ paso.titulo }}</h3>
+            <p class="timeline-item__text">{{ paso.texto }}</p>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+
+
+      {# ===================== GALERÍA DESDE LA DB ===================== #}
+      <section class="section">
+        <div class="page-container">
+          <div class="section-header section-header--center reveal">
+            <span class="badge badge--sage">Galería</span>
+            <h2 class="section-title">Momentos que <em>nos mueven</em></h2>
+            <p class="section-description">Un vistazo a la vida en el refugio y a las familias que crecieron gracias a una adopción.</p>
+          </div>
+        </div>
+        <div class="gallery-grid reveal">
+          {% for item in galeria %}
+          <div class="gallery-item {{ item.clase }}">
+            <img src="{{ item.imagen|img_src }}" alt="{{ item.alt }}" loading="lazy">
+            <div class="gallery-item__caption"><span class="gallery-item__caption-text">{{ item.caption }}</span></div>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      {# ===================== FAQ DESDE LA DB ===================== #}
+      <section class="faq-section">
+        <div class="page-container">
+          <div class="section-header section-header--center reveal">
+            <span class="badge">Preguntas frecuentes</span>
+            <h2 class="section-title">Resolvemos tus <em>dudas</em></h2>
+            <p class="section-description">Las preguntas más comunes sobre adopción, rescate y cómo podés ayudar.</p>
+          </div>
+        </div>
+        <div class="faq-list reveal">
+          {% for faq in faqs %}
+          <div class="faq-item">
+            <button class="faq-item__question" type="button">
+              {{ faq.pregunta }}
+              <span class="material-symbols-outlined faq-item__icon">expand_more</span>
+            </button>
+            <div class="faq-item__answer">
+              <p>{{ faq.respuesta }}</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section class="section section--tight">
+        <div class="page-container reveal">
+          <div class="cta-banner">
+            <h2 class="cta-banner__title">Unite al <em>cambio</em></h2>
+            <p class="cta-banner__text">Cada pequeño gesto cuenta. Desde compartir información hasta ofrecer un hogar temporal, vos podés hacer la diferencia.</p>
+            <button class="cta-banner__btn" type="button" data-nav="contacto">
+              <span class="material-symbols-outlined" style="font-size:20px;">arrow_forward</span>
+              Involucrate ahora
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand-col">
+        <a class="footer-logo" href="{{ url_for('inicio') }}" data-nav="home">
+          <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">pets</span>
+          Miauguau
+        </a>
+        <p class="footer-tagline">Rescatamos, cuidamos y encontramos hogares amorosos para animales perdidos o abandonados. Cada adopción es una segunda oportunidad.</p>
+      </div>
+      <div>
+        <p class="footer-col-title">Navegación</p>
+        <div class="footer-col-links">
+          <a class="footer-link" href="{{ url_for('inicio') }}" data-nav="home"><span class="material-symbols-outlined">arrow_forward</span>Inicio</a>
+          <a class="footer-link" href="{{ url_for('concientizacion') }}" data-nav="concientizar"><span class="material-symbols-outlined">arrow_forward</span>Concientización</a>
+          <a class="footer-link" href="{{ url_for('adopciones') }}" data-nav="adoptar"><span class="material-symbols-outlined">arrow_forward</span>Adopciones</a>
+          <a class="footer-link" href="{{ url_for('contacto') }}" data-nav="contacto"><span class="material-symbols-outlined">arrow_forward</span>Contacto</a>
+        </div>
+      </div>
+      <div>
+        <p class="footer-col-title">Ayudá</p>
+        <div class="footer-col-links">
+          <a class="footer-link" href="{{ url_for('adopciones') }}" data-nav="adoptar"><span class="material-symbols-outlined">pets</span>Adoptar</a>
+          <a class="footer-link" href="{{ url_for('contacto') }}" data-nav="contacto"><span class="material-symbols-outlined">volunteer_activism</span>Voluntariado</a>
+          <a class="footer-link" href="{{ url_for('concientizacion') }}" data-nav="concientizar"><span class="material-symbols-outlined">home</span>Hogar temporal</a>
+        </div>
+      </div>
+      <div>
+        <p class="footer-col-title">Contacto</p>
+        <div class="footer-col-links">
+          <a class="footer-link" href="mailto:{{ config.email }}"><span class="material-symbols-outlined">mail</span>{{ config.email }}</a>
+          <a class="footer-link" href="{{ url_for('contacto') }}" data-nav="contacto"><span class="material-symbols-outlined">schedule</span>{{ config.horario_corto }}</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copyright">{{ config.copyright_text }} Hecho con <span class="material-symbols-outlined" style="font-size:14px; color: var(--rust-soft); vertical-align: middle;">favorite</span> en Buenos Aires.</p>
+      <div class="footer-socials">
+        {% for red in redes %}
+        <a class="footer-social" href="{{ red.enlace }}" aria-label="{{ red.aria_label }}"><span class="material-symbols-outlined">{{ red.icono }}</span></a>
+        {% endfor %}
+      </div>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='JS/main.js') }}?v=2"></script>
+  <script src="{{ url_for('static', filename='JS/contacto.js') }}?v=2"></script>
+  <script src="{{ url_for('static', filename='JS/chatbot.js') }}?v=2"></script>
+  <script src="{{ url_for('static', filename='JS/cultui.js') }}?v=2"></script>
+</body>
+</html>

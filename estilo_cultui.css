@@ -1,0 +1,349 @@
+:root {
+  --cult-aurora-1: 184, 69, 31;       /* rust */
+  --cult-aurora-2: 217, 164, 65;      /* honey */
+  --cult-aurora-3: 95, 117, 81;       /* sage */
+  --cult-aurora-4: 201, 135, 107;     /* clay */
+  --cult-glow: 184, 69, 31;
+  --cult-ring: 217, 119, 81;
+  --cult-grain-opacity: 0.04;
+  --cult-ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --cult-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ---------- 1. Aurora mesh background (slow drift) ---------- */
+body::before {
+  content: '';
+  position: fixed;
+  inset: -20vmax;
+  z-index: -3;
+  pointer-events: none;
+  background:
+    radial-gradient(40vmax 40vmax at 12% 18%, rgba(var(--cult-aurora-1), 0.18), transparent 60%),
+    radial-gradient(36vmax 36vmax at 86% 12%, rgba(var(--cult-aurora-2), 0.16), transparent 60%),
+    radial-gradient(44vmax 44vmax at 78% 82%, rgba(var(--cult-aurora-4), 0.14), transparent 62%),
+    radial-gradient(32vmax 32vmax at 20% 88%, rgba(var(--cult-aurora-3), 0.12), transparent 60%);
+  filter: blur(8px);
+  animation: cult-aurora-drift 28s var(--cult-ease-out) infinite alternate;
+}
+html.dark body::before {
+  background:
+    radial-gradient(40vmax 40vmax at 12% 18%, rgba(var(--cult-aurora-1), 0.22), transparent 60%),
+    radial-gradient(36vmax 36vmax at 86% 12%, rgba(var(--cult-aurora-2), 0.16), transparent 60%),
+    radial-gradient(44vmax 44vmax at 78% 82%, rgba(var(--cult-aurora-4), 0.14), transparent 62%),
+    radial-gradient(32vmax 32vmax at 20% 88%, rgba(var(--cult-aurora-3), 0.14), transparent 60%);
+}
+@keyframes cult-aurora-drift {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  50%  { transform: translate(3vmax, -2vmax) rotate(2deg); }
+  100% { transform: translate(-2vmax, 3vmax) rotate(-2deg); }
+}
+
+/* ---------- 2. Film grain overlay ---------- */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  opacity: var(--cult-grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+html.dark body::after { mix-blend-mode: screen; opacity: 0.06; }
+
+/* ---------- 3. Spotlight on cards (mouse-tracked) ---------- */
+.stat-card,
+.testimonial-card,
+.pet-card,
+.contact-info-card,
+.faq-item,
+.step-card,
+.card,
+.featured-image-wrap,
+.gallery-item,
+.modal-card {
+  position: relative;
+  --mx: 50%;
+  --my: 50%;
+}
+.stat-card::before,
+.testimonial-card::before,
+.pet-card::before,
+.contact-info-card::before,
+.step-card::before,
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(280px circle at var(--mx) var(--my),
+              rgba(var(--cult-glow), 0.10), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s var(--cult-ease-out);
+  pointer-events: none;
+  z-index: 0;
+}
+.stat-card:hover::before,
+.testimonial-card:hover::before,
+.pet-card:hover::before,
+.contact-info-card:hover::before,
+.step-card:hover::before,
+.card:hover::before {
+  opacity: 1;
+}
+.stat-card > *:not(.stat-number),
+.testimonial-card > *,
+.pet-card > *,
+.contact-info-card > *,
+.step-card > *,
+.card > * { position: relative; z-index: 1; }
+
+/* ---------- 4. Focus ring (keyboard) ---------- */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid rgba(var(--cult-glow), 0.7);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ---------- 5. Custom cursor follower ---------- */
+.cult-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(var(--cult-glow), 0.6);
+  background: rgba(var(--cult-glow), 0.08);
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 0.25s var(--cult-ease-spring), height 0.25s var(--cult-ease-spring),
+              background 0.25s var(--cult-ease-out), border-color 0.25s var(--cult-ease-out),
+              opacity 0.25s var(--cult-ease-out);
+  mix-blend-mode: difference;
+  opacity: 0;
+}
+.cult-cursor--visible { opacity: 1; }
+.cult-cursor--hover {
+  width: 56px;
+  height: 56px;
+  background: rgba(var(--cult-glow), 0.18);
+  border-color: rgba(var(--cult-glow), 0.9);
+}
+@media (hover: none), (pointer: coarse) {
+  .cult-cursor { display: none; }
+}
+
+/* ---------- 6. Nav link underline shimmer ---------- */
+.nav-link {
+  background-image: linear-gradient(90deg,
+    transparent 0%,
+    rgba(var(--cult-glow), 0.08) 50%,
+    transparent 100%);
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  transition: background-position 0.5s var(--cult-ease-out), color 0.25s var(--cult-ease-out);
+}
+.nav-link:hover { background-position: 0 0; }
+
+/* ---------- 7. Hero title word reveal ---------- */
+.hero-title, .section-title, .display {
+  background: linear-gradient(120deg,
+    var(--on-surface) 0%,
+    var(--on-surface) 50%,
+    color-mix(in srgb, var(--on-surface) 60%, var(--rust)) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* ---------- 8. Magnetic button shine ---------- */
+.btn-primary, .btn-outline, .cta-banner__btn, .btn-submit, .btn-adopt-nav {
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary::after, .btn-outline::after, .cta-banner__btn::after,
+.btn-submit::after, .btn-adopt-nav::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 251, 243, 0.35), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.7s var(--cult-ease-out);
+  pointer-events: none;
+  z-index: 2;
+}
+.btn-primary:hover::after, .btn-outline:hover::after, .cta-banner__btn:hover::after,
+.btn-submit:hover::after, .btn-adopt-nav:hover::after { left: 130%; }
+
+/* ---------- 9. Pet card glow on hover ---------- */
+.pet-card {
+  isolation: isolate;
+}
+.pet-card::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg,
+    rgba(var(--cult-glow), 0.6),
+    transparent 40%,
+    transparent 60%,
+    rgba(var(--cult-aurora-3), 0.4));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s var(--cult-ease-out);
+  pointer-events: none;
+  z-index: 1;
+}
+.pet-card:hover::after { opacity: 1; }
+
+/* ---------- 10. Stats number gradient ---------- */
+.stat-number {
+  background: linear-gradient(135deg, var(--rust), var(--honey-deep));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ---------- 11. Featured story quote mark ---------- */
+.featured-quote::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: -3px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--rust) 14%, transparent);
+  z-index: -1;
+}
+
+/* ---------- 12. Marquee item stagger entrance ---------- */
+.marquee-item {
+  animation: marquee-fade-in 0.8s var(--cult-ease-out) backwards;
+}
+.marquee-item:nth-child(2) { animation-delay: 0.1s; }
+.marquee-item:nth-child(3) { animation-delay: 0.2s; }
+.marquee-item:nth-child(4) { animation-delay: 0.3s; }
+.marquee-item:nth-child(5) { animation-delay: 0.4s; }
+@keyframes marquee-fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- 13. Scroll progress bar (top) ---------- */
+.cult-scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--rust), var(--honey), var(--sage));
+  z-index: 200;
+  transition: width 0.05s linear;
+  box-shadow: 0 0 12px rgba(var(--cult-glow), 0.6);
+}
+
+/* ---------- 14. Image reveal mask on hero ---------- */
+.image-container {
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 88%, transparent 100%);
+          mask-image: linear-gradient(180deg, #000 0%, #000 88%, transparent 100%);
+}
+
+/* ---------- 15. Step card number glow on hover ---------- */
+.step-card:hover .step-card__number {
+  text-shadow: 0 0 30px rgba(var(--cult-glow), 0.4);
+}
+
+/* ---------- 16. Floating badge glassmorphism shimmer ---------- */
+.floating-badge::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(120deg,
+    transparent 30%,
+    rgba(255, 251, 243, 0.25) 50%,
+    transparent 70%);
+  background-size: 200% 100%;
+  animation: cult-shimmer 5s var(--cult-ease-out) infinite;
+  pointer-events: none;
+}
+@keyframes cult-shimmer {
+  0%, 100% { background-position: 200% 0; }
+  50% { background-position: -100% 0; }
+}
+
+/* ---------- 17. CTA banner noise overlay ---------- */
+.cta-banner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+/* ---------- 18. FAQ icon rotation glow ---------- */
+.faq-item--open .faq-item__icon {
+  filter: drop-shadow(0 0 8px rgba(var(--cult-glow), 0.5));
+}
+
+/* ---------- 19. Form input glow on focus ---------- */
+.form-input:focus, .form-select:focus, .form-textarea:focus,
+.newsletter-form:focus-within {
+  box-shadow: 0 0 0 4px rgba(var(--cult-glow), 0.12),
+              0 0 24px -4px rgba(var(--cult-glow), 0.2);
+}
+
+/* ---------- 20. Section dividers (organic) ---------- */
+.section + .section::before {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 0;
+  margin: 0 auto;
+}
+
+/* ---------- 21. Dark mode specific refinements ---------- */
+html.dark .stat-number {
+  background: linear-gradient(135deg, var(--rust-soft), var(--honey));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+html.dark .hero-title, html.dark .section-title, html.dark .display {
+  background: linear-gradient(120deg,
+    var(--on-surface) 0%,
+    var(--on-surface) 50%,
+    color-mix(in srgb, var(--on-surface) 70%, var(--rust-soft)) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* ---------- 22. Selection in dark mode ---------- */
+html.dark ::selection { background: var(--rust); color: var(--ink); }
+
+/* ---------- 23. Reduce motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  body::before { animation: none; }
+  .marquee-track { animation: none; }
+}
